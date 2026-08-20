@@ -92,10 +92,8 @@ const Navbar = () => {
       {/* second part of the navbar */}
       <div className="flex justify-between items-center  w-[85%] mx-auto">
         {navbarLinks.map((link) => (
-          <NavLink to={link.path} className={linkClass}>
-            <span className="text-xl capitalize" key={link.name}>
-              {link.name}
-            </span>
+          <NavLink key={link.name} to={link.path} className={linkClass}>
+            <span className="text-xl capitalize">{link.name}</span>
           </NavLink>
         ))}
       </div>

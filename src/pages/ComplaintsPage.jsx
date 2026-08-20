@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { FaArrowLeft, FaCircleInfo } from "react-icons/fa6";
 import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import SelectComplaintType from "../Features/FileComplaint/SelectComplaintType";
 import DateSelector from "../Features/FileComplaint/DateSelector";
 import { FileImage } from "lucide-react";
@@ -27,18 +28,24 @@ const ComplaintsPage = () => {
     { value: "both", label: "Both" },
   ];
 
-  const handleSubmitComplaint = (e) => {
+  const handleSubmitComplaint = async (e) => {
     e.preventDefault();
-    addComplaint({
-      complaintType: selectedComplaintType,
-      date: dateChosen,
-      description,
-      submittedTo: activeTab,
-      recipient: selectedRecipient,
-      filedAgainstName: filedAgainstEmployee ? filedAgainstEmployee.name : null,
-      witnessName: witness ? witness.name : null,
-    });
-    navigate("/submittedcomplaint");
+    try {
+      await addComplaint({
+        complaintType: selectedComplaintType,
+        date: dateChosen,
+        description,
+        submittedTo: activeTab,
+        recipient: selectedRecipient,
+        filedAgainstId: filedAgainstEmployee ? filedAgainstEmployee.id : null,
+        witnessId: witness ? witness.id : null,
+      });
+      toast.success("Complaint filed successfully");
+      navigate("/submittedcomplaint");
+    } catch (err) {
+      toast.error("Failed to file complaint");
+      console.error(err);
+    }
   };
 
   const isFormValid =
@@ -49,12 +56,10 @@ const ComplaintsPage = () => {
 
   return (
     <div className="mt-40 min-h-screen genLayout">
-      {/* the container to hold all the items */}
       <form
         onSubmit={handleSubmitComplaint}
         className="w-[45%] z-50 shadow-lg mx-auto p-4 flex flex-col space-y-2"
       >
-        {/* first section */}
         <div className="flex flex-col gap-y-3 mb-6 items-start pb-6 border-b border-b-[#E1E1E1]">
           <Link to="/" className="flex gap-1 items-center">
             <FaArrowLeft className="w-4 text-[#545454]/50 h-4 inline" />
@@ -70,7 +75,6 @@ const ComplaintsPage = () => {
           </div>
         </div>
 
-        {/* second section */}
         <div className="flex flex-col border p-2 gap-y-2 ">
           <div className="flex flex-col gap-y-1 mb-3">
             <p className="text-base font-semibold">
@@ -112,7 +116,6 @@ const ComplaintsPage = () => {
             </div>
           </div>
 
-          {/* for employee */}
           {activeTab === "an employee" && (
             <div className="flex flex-col gap-2">
               <SelectEmployee
@@ -121,7 +124,6 @@ const ComplaintsPage = () => {
               />
             </div>
           )}
-          {/* third section */}
           <div className="flex flex-col">
             <SelectComplaintType
               selected={selectedComplaintType}
@@ -129,7 +131,6 @@ const ComplaintsPage = () => {
             />
           </div>
 
-          {/* for employee alone */}
           {activeTab === "an employee" && (
             <div className=" flex flex-col border mb-2 ">
               <span className="flex flex-col gap-2">
@@ -192,7 +193,6 @@ const ComplaintsPage = () => {
               />
             </div>
           )}
-          {/* fourth section - date */}
           <div className="flex mt-3 flex-col">
             <DateSelector
               chosenDate={dateChosen}
@@ -200,7 +200,6 @@ const ComplaintsPage = () => {
             />
           </div>
 
-          {/* fifth section - description */}
           <div className="flex mt-3 flex-col gap-2">
             <p className="text-[#000] text-base font-bold">
               Provide description of complaint in details*
@@ -223,7 +222,6 @@ const ComplaintsPage = () => {
             </div>
           )}
 
-          {/* sixth section - recipient */}
           <div className="flex mt-3 flex-col gap-2">
             <span className="flex relative items-center gap-2">
               <p className="text-[#000] text-base font-bold">
@@ -277,7 +275,6 @@ const ComplaintsPage = () => {
             </div>
           </div>
 
-          {/* seventh section - document upload */}
           <div className="flex flex-col gap-2">
             <p className="text-base font-bold">Documents (Optional)</p>
             <div className="flex justify-between items-center border border-dashed border-[#2898A4] bg-[#EAF8FA] rounded-md p-2">
@@ -294,7 +291,6 @@ const ComplaintsPage = () => {
           </div>
         </div>
 
-        {/* action buttons */}
         <div className="flex gap-2 mt-3 justify-between items-center">
           <button
             type="button"

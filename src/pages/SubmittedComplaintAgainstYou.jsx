@@ -10,8 +10,15 @@ const SubmittedComplaintAgainstYou = () => {
   const [complaints, setComplaints] = useState([]);
 
   useEffect(() => {
-    const data = getComplaintsAgainstEmployee("Racheal Patrick");
-    setComplaints(data);
+    const fetchComplaints = async () => {
+      try {
+        const data = await getComplaintsAgainstEmployee();
+        setComplaints(data);
+      } catch (error) {
+        console.error("Error fetching complaints against you", error);
+      }
+    };
+    fetchComplaints();
   }, []);
 
   return (
@@ -31,6 +38,7 @@ const SubmittedComplaintAgainstYou = () => {
       <div className="flex flex-col space-y-3 ">
         <span className="flex px-3 w-[18vw] py-2 h-10 rounded-full border items-center justify-between bg-[#E1E1E1]">
           <button
+            type="button"
             onClick={() => navigate("/submittedcomplaint")}
             className="px-6 py-2"
           >
@@ -38,7 +46,7 @@ const SubmittedComplaintAgainstYou = () => {
               reported by you
             </p>
           </button>
-          <button className="bg-[#fff] px-6 py-2 rounded-full">
+          <button type="button" className="bg-[#fff] px-6 py-2 rounded-full">
             <p className="text-base capitalize font-semibold text-[#000]/50">
               against you
             </p>

@@ -34,11 +34,13 @@ const ComplaintRow = ({
         <span className="text-sm text-gray-700">{item.dateReported}</span>
       </div>
       <p className="w-[13%] text-sm text-gray-700">{item.complaintType}</p>
-      <p className="w-[13%] text-sm text-gray-700">{item.filedAgainst}</p>
-      <p className="w-[13%] text-sm text-gray-700">{item.witness}</p>
-      <p className="w-[13%] text-sm text-gray-700">{item.status}</p>
-      <p className="w-[13%] text-sm text-gray-700">{item.stage}</p>
-      <p className="w-[13%] text-sm text-gray-700">{item.decision}</p>
+      <p className="w-[13%] text-sm text-gray-700">
+        {item.filedAgainst || "N/A"}
+      </p>
+      <p className="w-[13%] text-sm text-gray-700">{item.witness || "N/A"}</p>
+      <p className="w-[13%] text-sm text-gray-700 capitalize">{item.status}</p>
+      <p className="w-[13%] text-sm text-gray-700">{item.stage || "N/A"}</p>
+      <p className="w-[13%] text-sm text-gray-700">{item.decision || "N/A"}</p>
       <div className="w-[6%] flex justify-end relative" ref={menuRef}>
         <button type="button" onClick={onMenuClick}>
           <FaEllipsisV size={14} className="text-gray-500" />

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
-import SelectWitnessModal from "./SelectWitnessModal";
+import SelectPersonModal from "./SelectPersonalModal";
 
 const SelectWitness = ({ selectedWitness, setSelectedWitness }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -14,15 +14,16 @@ const SelectWitness = ({ selectedWitness, setSelectedWitness }) => {
         className="w-full flex items-center justify-between border border-[#E1E1E1] rounded-md px-4 py-3 text-left"
       >
         <span className={selectedWitness ? "text-[#000]" : "text-[#878787]"}>
-          {selectedWitness ? selectedWitness.name : "Select witness"}
+          {selectedWitness ? selectedWitness.full_name : "Select witness"}
         </span>
         <ChevronDown className="w-4 h-4 text-[#878787]" />
       </button>
 
-      <SelectWitnessModal
+      <SelectPersonModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onSubmit={(employee) => setSelectedWitness(employee)}
+        title="Select Witness"
       />
     </div>
   );

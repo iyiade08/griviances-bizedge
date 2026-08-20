@@ -5,6 +5,7 @@ import Pagination from "../Features/SubmittedComplaints/Pagination";
 import ColumnHeader from "../Features/SubmittedComplaints/ColumHeader";
 import ComplaintRow from "../Features/SubmittedComplaints/ComplaintRow";
 import { getComplaints, deleteComplaint } from "../utils/mockComplaints";
+import Spinner from "../component/Spinner";
 
 const SubmittedComplaint = () => {
   const navigate = useNavigate();
@@ -13,9 +14,21 @@ const SubmittedComplaint = () => {
   const [selectedIds, setSelectedIds] = useState([]);
   const [complaints, setComplaints] = useState([]);
   const [openMenuId, setOpenMenuId] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    setComplaints(getComplaints());
+    const fetchComplaints = async () => {
+      setLoading(true);
+      try {
+        const data = await getComplaints();
+        setComplaints(data);
+      } catch (error) {
+        console.error("Error fetching complaints", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchComplaints();
   }, []);
 
   const toggleSelect = (id) => {
@@ -24,10 +37,16 @@ const SubmittedComplaint = () => {
     );
   };
 
-  const handleDelete = (id) => {
-    const updated = deleteComplaint(id);
-    setComplaints(updated);
-    setOpenMenuId(null);
+  const handleDelete = async (id) => {
+    try {
+      const updated = await deleteComplaint(id);
+      setComplaints(updated);
+    } catch (error) {
+      console.error(error);
+      alert("Deleting complaints isn't available yet.");
+    } finally {
+      setOpenMenuId(null);
+    }
   };
 
   return (
@@ -39,7 +58,6 @@ const SubmittedComplaint = () => {
       </div>
 
       <div className="flex flex-col p-2">
-        {/* Tabs */}
         <div className="w-[20vw] flex items-center justify-between px-4 h-12 mb-5 rounded-full bg-[#E1E1E1]">
           <button type="button" className="bg-[#fff] px-6 py-2 rounded-full">
             <p className="text-base capitalize">reported by you</p>
@@ -54,7 +72,6 @@ const SubmittedComplaint = () => {
           </button>
         </div>
 
-        {/* Filters + Pagination */}
         <div className="flex justify-between items-center mb-6">
           <div className="flex gap-10">
             <div className="flex items-center bg-[#E1E1E1]/50 border rounded-lg  ">
@@ -98,7 +115,6 @@ const SubmittedComplaint = () => {
           />
         </div>
 
-        {/* Table header */}
         <div className="flex items-center bg-[#E1E1E1]/50 shadow-lg border mb-2 p-2 ">
           <div className="w-[16%] flex items-center gap-2 ">
             <ColumnHeader
@@ -124,9 +140,10 @@ const SubmittedComplaint = () => {
           <div className="w-[6%]" />
         </div>
 
-        {/* Table rows */}
         <div className="flex flex-col">
-          {complaints.length === 0 ? (
+          {loading ? (
+            <Spinner loading={loading} size={50} />
+          ) : complaints.length === 0 ? (
             <p className="text-center text-[#878787] py-8">
               No complaints filed yet.
             </p>
