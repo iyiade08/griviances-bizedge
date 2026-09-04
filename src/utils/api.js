@@ -7,7 +7,7 @@ const getAccessToken = async () => {
   const res = await fetch(`${BASE_URL}/api/v1/auth/token/`, {
     method: "POST",
     headers: { "content-Type": "application/json" },
-    body: JSON.stringify({ username: "bob", password: "demo-password-1" }),
+    body: JSON.stringify({ username: "priya", password: "demo-password-1" }),
   });
   if (!res.ok) {
     throw new Error("Failed to authenticate");
@@ -35,4 +35,17 @@ export const getEmployees = async (search = "") => {
   }
   const json = await res.json();
   return json.data;
+};
+
+export const getCurrentUser = async () => {
+  const token = await getAccessToken();
+  const res = await fetch(`${BASE_URL}/api/v1/auth/me/`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  if (!res.ok) {
+    throw new Error("Failed to fetch current user");
+  }
+  return res.json();
 };

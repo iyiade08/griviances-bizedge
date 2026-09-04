@@ -9,9 +9,13 @@ import { FaTimes } from "react-icons/fa";
 import SelectWitness from "../Features/FileComplaint/SelectWitness";
 import SelectEmployee from "../Features/FileComplaint/SelectEmployee";
 import { addComplaint } from "../utils/mockComplaints";
+import { useAuth } from "../context/AuthContext";
 
 const ComplaintsPage = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const isHr = user?.is_hr;
+
   const [activeTab, setActiveTab] = useState("general complaint");
   const [showinfo, setShowInfo] = useState(false);
   const [selectedRecipient, setSelectedRecipient] = useState("hr");
@@ -21,6 +25,10 @@ const ComplaintsPage = () => {
   const [description, setDescription] = useState("");
   const [filedAgainstEmployee, setFiledAgainstEmployee] = useState(null);
   const [witness, setWitness] = useState(null);
+
+  // HR-only fields
+  const [filingFor, setFilingFor] = useState("employee"); // "employee" | "company"
+  const [complainantEmployee, setComplainantEmployee] = useState(null);
 
   const recipients = [
     { value: "hr", label: "HR" },
@@ -39,9 +47,16 @@ const ComplaintsPage = () => {
         recipient: selectedRecipient,
         filedAgainstId: filedAgainstEmployee ? filedAgainstEmployee.id : null,
         witnessId: witness ? witness.id : null,
+        // HR-only
+        isHr,
+        filingFor: isHr ? filingFor : null,
+        complainantId:
+          isHr && filingFor === "employee" && complainantEmployee
+            ? complainantEmployee.id
+            : null,
       });
       toast.success("Complaint filed successfully");
-      navigate("/submittedcomplaint");
+      navigate(isHr ? "/hrpage" : "/submittedcomplaint");
     } catch (err) {
       toast.error("Failed to file complaint");
       console.error(err);
@@ -52,7 +67,8 @@ const ComplaintsPage = () => {
     selectedComplaintType.trim() !== "" &&
     description.trim() !== "" &&
     dateChosen !== null &&
-    (activeTab !== "an employee" || filedAgainstEmployee !== null);
+    (activeTab !== "an employee" || filedAgainstEmployee !== null) &&
+    (!isHr || filingFor !== "employee" || complainantEmployee !== null);
 
   return (
     <div className="mt-40 min-h-screen genLayout">
@@ -76,6 +92,64 @@ const ComplaintsPage = () => {
         </div>
 
         <div className="flex flex-col border p-2 gap-y-2 ">
+          {isHr && (
+            <div className="flex flex-col gap-y-3 mb-3 pb-3 border-b border-b-[#E1E1E1]">
+              <div className="flex flex-col gap-y-1">
+                <p className="text-base font-semibold">
+                  Is this complaint for an employee or on behalf of the
+                  company?*
+                </p>
+                <div className="flex items-center gap-x-20 pl-10 h-12 bg-[#E1E1E1] rounded-md">
+                  <button
+                    type="button"
+                    onClick={() => setFilingFor("employee")}
+                    className="flex items-center gap-2"
+                  >
+                    <div
+                      className={
+                        filingFor === "employee"
+                          ? "w-4 h-4 ring-2 ring-[#2898A4] rounded-full bg-[#2898A4]"
+                          : "w-4 h-4 ring-1 ring-gray-500 rounded-full"
+                      }
+                    ></div>
+                    <p className="text-[#000]/50 capitalize text-base">
+                      for employee
+                    </p>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setFilingFor("company")}
+                    className="flex items-center gap-2"
+                  >
+                    <div
+                      className={
+                        filingFor === "company"
+                          ? "w-4 h-4 ring-2 ring-[#2898A4] rounded-full bg-[#2898A4]"
+                          : "w-4 h-4 ring-1 ring-gray-500 rounded-full"
+                      }
+                    ></div>
+                    <p className="text-[#000]/50 capitalize text-base">
+                      on behalf of the company
+                    </p>
+                  </button>
+                </div>
+              </div>
+
+              {filingFor === "employee" && (
+                <div className="flex flex-col gap-1">
+                  <p className="text-base font-semibold">Select Complainant*</p>
+                  <p className="text-sm text-[#878787]">
+                    Employee whom you are filing a complaint on behalf of
+                  </p>
+                  <SelectEmployee
+                    selectedEmployee={complainantEmployee}
+                    setSelectedEmployee={setComplainantEmployee}
+                  />
+                </div>
+              )}
+            </div>
+          )}
+
           <div className="flex flex-col gap-y-1 mb-3">
             <p className="text-base font-semibold">
               Is this a general complaint or it’s about another employee?*

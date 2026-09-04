@@ -4,51 +4,58 @@ import home from "../assets/Navbaricon/home-icon.png";
 import notification from "../assets/Navbaricon/notification-icon.png";
 import info from "../assets/Navbaricon/info-icon.png";
 import { NavLink, Link } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+const employeeLinks = [
+  {
+    name: "home",
+    path: "/",
+  },
+  {
+    name: "people",
+    path: "/people",
+  },
+  {
+    name: "timeoff",
+    path: "/timeoff",
+  },
+  {
+    name: "benefits",
+    path: "/benefits",
+  },
+  {
+    name: "documents",
+    path: "/documents",
+  },
+  {
+    name: "payslips",
+    path: "/payslips",
+  },
+  {
+    name: "performance review",
+    path: "/performance-review",
+  },
+  {
+    name: "complaints",
+    path: "/submittedcomplaint",
+  },
+  {
+    name: "assets",
+    path: "/assets",
+  },
+  {
+    name: "tasks",
+    path: "/tasks",
+  },
+];
+
+const HrLinks = [
+  { name: "overview", path: "/hrpage" },
+  { name: "complaints", path: "/hrcomplaint" },
+];
 
 const Navbar = () => {
-  const navbarLinks = [
-    {
-      name: "home",
-      path: "/",
-    },
-    {
-      name: "people",
-      path: "/people",
-    },
-    {
-      name: "timeoff",
-      path: "/timeoff",
-    },
-    {
-      name: "benefits",
-      path: "/benefits",
-    },
-    {
-      name: "documents",
-      path: "/documents",
-    },
-    {
-      name: "payslips",
-      path: "/payslips",
-    },
-    {
-      name: "performance review",
-      path: "/performance-review",
-    },
-    {
-      name: "complaints",
-      path: "/submittedcomplaint",
-    },
-    {
-      name: "assets",
-      path: "/assets",
-    },
-    {
-      name: "tasks",
-      path: "/tasks",
-    },
-  ];
-
+  const { user } = useAuth();
+  const navbarLinks = user?.is_hr ? HrLinks : employeeLinks;
   const linkClass = ({ isActive }) =>
     isActive
       ? "font-normal font-semibold text-xl capitalize bg-[#EAF8FA] text-[#2898A4] border-b-2 border-b-[#2898A4] p-3 rounded-t-xl"
@@ -90,7 +97,7 @@ const Navbar = () => {
         </div>
       </div>
       {/* second part of the navbar */}
-      <div className="flex justify-between items-center  w-[85%] mx-auto">
+      <div className="flex gap-6 items-center  w-[85%] mx-auto">
         {navbarLinks.map((link) => (
           <NavLink key={link.name} to={link.path} className={linkClass}>
             <span className="text-xl capitalize">{link.name}</span>
